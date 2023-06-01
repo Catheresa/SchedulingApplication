@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #2f98ed;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cstewart.schedulingapplication.controller.ReportOptions_Controller">
+   <children>
+      <Button layoutX="110.0" layoutY="60.0" mnemonicParsing="false" onAction="#onClickContactReportOptions" prefHeight="30.0" prefWidth="400.0" text="Contact Schedule">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+      </Button>
+      <Button layoutX="110.0" layoutY="140.0" mnemonicParsing="false" onAction="#onClickCustomerByDivisionReportOptions" prefHeight="30.0" prefWidth="400.0" text="Customer By Division Schedule">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+      </Button>
+      <Button layoutX="110.0" layoutY="220.0" mnemonicParsing="false" onAction="#onClickTypeReportOptions" prefHeight="30.0" prefWidth="400.0" text="Total Appointments">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+      </Button>
+      <Button layoutX="110.0" layoutY="300.0" mnemonicParsing="false" onAction="#onClickExitScreenReportOptions" prefHeight="30.0" prefWidth="400.0" text="Exit Screen">
+         <font>
+            <Font name="System Bold Italic" size="24.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

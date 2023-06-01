@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="372.0" prefWidth="522.0" style="-fx-background-color: #2f98ed;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cstewart.schedulingapplication.controller.AddCustomer_Controller">
+    <children>
+        <ButtonBar layoutX="49.0" layoutY="303.0" prefHeight="58.0" prefWidth="440.0">
+            <buttons>
+            <Button fx:id="btnAddCustomer" mnemonicParsing="false" onAction="#onClickAddCustomer" prefHeight="25.0" prefWidth="106.0" text="Add Customer">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Button>
+              <Button fx:id="btnAppointment" mnemonicParsing="false" onAction="#onClickAppointment" prefHeight="25.0" prefWidth="142.0" text="Appointment">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" text="Clear Selections">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Button>
+                <Button fx:id="btnExitScreen" mnemonicParsing="false" onAction="#onClickExitScreen" prefHeight="25.0" prefWidth="115.0" text="Exit Screen">
+                    <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                    </font></Button>
+            </buttons>
+        </ButtonBar>
+        <Label layoutX="208.0" layoutY="30.0" text="Add Customer" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+        <TextField fx:id="txtCustomerID" disable="true" editable="false" layoutX="171.0" layoutY="80.0" prefHeight="25.0" prefWidth="315.0" promptText="Auto-populates" />
+        <TextField fx:id="txtName" layoutX="171.0" layoutY="140.0" prefHeight="25.0" prefWidth="315.0" />
+        <TextField fx:id="txtAddress" layoutX="171.0" layoutY="170.0" prefHeight="25.0" prefWidth="315.0" promptText="123 ABC Street, White Plains" />
+        <TextField fx:id="txtPostalCode" layoutX="171.0" layoutY="230.0" prefHeight="25.0" prefWidth="315.0" />
+        <TextField fx:id="txtPhone" layoutX="171.0" layoutY="260.0" prefHeight="25.0" prefWidth="315.0" />
+        <Label layoutX="48.0" layoutY="80.0" text="ID:" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <Label layoutX="48.0" layoutY="110.0" prefHeight="17.0" prefWidth="66.0" text="Country" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <Label layoutX="48.0" layoutY="140.0" text="Name" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <ComboBox fx:id="cbCountry" layoutX="171.0" layoutY="110.0" onAction="#onSelectCBCountry" prefHeight="25.0" prefWidth="315.0" promptText="Select Country" />
+        <Label layoutX="48.0" layoutY="170.0" text="Address" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <Label layoutX="48.0" layoutY="200.0" text="State/Prov" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <Label layoutX="48.0" layoutY="230.0" text="Postal Code" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+        <Label layoutX="48.0" layoutY="260.0" text="Phone" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <ComboBox fx:id="cbStateProvince" layoutX="171.0" layoutY="200.0" prefWidth="315.0" promptText="Select State/Province" />
+    </children>
+</AnchorPane>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="612.0" style="-fx-background-color: #2f98ed;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cstewart.schedulingapplication.controller.ReportCustomersByDivision_Controller">
+    <children>
+        <ComboBox fx:id="divisionCB" layoutX="28.0" layoutY="41.0" onAction="#onSelectDivision" prefHeight="25.0" prefWidth="230.0" promptText="Select State" />
+        <TableView fx:id="customerTable" layoutX="28.0" layoutY="100.0" prefHeight="236.0" prefWidth="562.0">
+            <columns>
+                <TableColumn fx:id="customer_IDCol" prefWidth="101.0" text="Customer ID" />
+                <TableColumn fx:id="customerNameCol" prefWidth="111.0" text="Customer Name" />
+                <TableColumn fx:id="addressCol" prefWidth="174.199951171875" text="Address" />
+                <TableColumn fx:id="postalCodeCol" prefWidth="83.20001220703125" text="Postal Code" />
+                <TableColumn fx:id="phoneCol" prefWidth="89.0" text="Phone" />
+            </columns>
+        </TableView>
+      <ButtonBar layoutY="336.0" prefHeight="64.0" prefWidth="590.0">
+        <buttons>
+          <Button mnemonicParsing="false" onAction="#onClickRefresh" text="Refresh" />
+              <Button mnemonicParsing="false" onAction="#onClickExitScreen" prefHeight="25.0" prefWidth="230.0" text="Exit Screen" />
+        </buttons>
+      </ButtonBar>
+    </children>
+</AnchorPane>

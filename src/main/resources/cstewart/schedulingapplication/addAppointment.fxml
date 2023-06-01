@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="474.0" prefWidth="300.0" style="-fx-background-color: #2f98ed;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cstewart.schedulingapplication.controller.AddAppointment_Controller">
+    <children>
+        <ButtonBar layoutX="4.0" layoutY="433.0" prefHeight="47.0" prefWidth="516.0">
+         <buttons>
+            <Button mnemonicParsing="false" onAction="#onClickClearSelections" text="Clear Selections">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Button>
+              <Button mnemonicParsing="false" onAction="#onClickAddAppointment" prefHeight="25.0" prefWidth="139.0" text="Add Appointment">
+              <font>
+                  <Font name="System Bold Italic" size="12.0" />
+              </font>
+              </Button>
+            <Button mnemonicParsing="false" onAction="#onClickExitScreen" prefHeight="25.0" prefWidth="363.0" text="Exit Screen">
+              <font>
+                  <Font name="System Bold Italic" size="12.0" />
+              </font>
+            </Button>
+         </buttons></ButtonBar>
+        <Label alignment="CENTER" layoutX="14.0" prefHeight="58.0" prefWidth="526.0" text="Add Appointment" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="36.0" />
+            </font>
+        </Label>
+        <TextField fx:id="txtTitle" layoutX="140.0" layoutY="160.0" prefHeight="25.0" prefWidth="375.0">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></TextField>
+        <TextField fx:id="txtDescription" layoutX="140.0" layoutY="200.0" prefHeight="25.0" prefWidth="375.0">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></TextField>
+        <TextField fx:id="txtLocation" layoutX="140.0" layoutY="240.0" prefHeight="25.0" prefWidth="375.0">
+         <padding>
+            <Insets bottom="5.0" />
+         </padding></TextField>
+        <TextField fx:id="txtType" layoutX="140.0" layoutY="280.0" prefHeight="25.0" prefWidth="375.0">
+         <padding>
+            <Insets bottom="5.0" />
+         </padding></TextField>
+        <Label layoutX="10.0" layoutY="80.0" text="Contact Name" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+        <Label layoutX="10.0" layoutY="120.0" prefHeight="17.0" prefWidth="66.0" text="Appt ID" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+        <Label layoutX="10.0" layoutY="160.0" text="Title" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+        <Label layoutX="10.0" layoutY="200.0" text="Description" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+        <Label layoutX="10.0" layoutY="240.0" text="Location" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+        <Label layoutX="10.0" layoutY="280.0" text="Type" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+        <Label layoutX="10.0" layoutY="320.0" text="Date" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+      <Label layoutX="10.0" layoutY="358.0" text="Start Time" textFill="WHITE">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding>
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label layoutX="10.0" layoutY="391.0" text="Customer ID" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+      <Label layoutX="288.0" layoutY="391.0" text="User ID" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></Label>
+      <TextField fx:id="txtAppointmentID" disable="true" editable="false" layoutX="140.0" layoutY="125.0" prefHeight="25.0" prefWidth="375.0" text="Auto-populates">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding></TextField>
+      <ComboBox fx:id="contactNameCB" layoutX="140.0" layoutY="80.0" prefHeight="25.0" prefWidth="375.0" promptText="Select Contact">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding>
+      </ComboBox>
+      <DatePicker fx:id="datePicker" layoutX="140.0" layoutY="320.0" prefHeight="36.0" prefWidth="132.0" promptText="Select Date">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding>
+      </DatePicker>
+      <ComboBox fx:id="customerIDCB" layoutX="140.0" layoutY="397.0" prefHeight="25.0" prefWidth="132.0" promptText="Select Customer ID" />
+      <ComboBox fx:id="userIDCB" layoutX="367.0" layoutY="397.0" prefWidth="150.0" promptText="Select User ID" />
+      <ComboBox fx:id="startTimeCB" layoutX="140.0" layoutY="364.0" prefHeight="25.0" prefWidth="132.0" promptText="Select Start Time" />
+      <Label layoutX="288.0" layoutY="358.0" text="End Time" textFill="WHITE">
+         <padding>
+            <Insets bottom="5.0" top="5.0" />
+         </padding>
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="endTimeCB" layoutX="367.0" layoutY="364.0" prefWidth="150.0" promptText="Select End Time" />
+    </children>
+   <padding>
+      <Insets bottom="5.0" top="5.0" />
+   </padding>
+</AnchorPane>

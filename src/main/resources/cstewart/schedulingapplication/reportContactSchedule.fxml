@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="734.0" style="-fx-background-color: #2f98ed;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cstewart.schedulingapplication.controller.ReportContactSchedule_Controller">
+   <children>
+      <ComboBox fx:id="appointmentContactNameCB" layoutX="28.0" layoutY="41.0" onAction="#onSelectContactNameReportContactSchedule" prefHeight="25.0" prefWidth="230.0" promptText="Select Contact" />
+      <TableView fx:id="appointmentTable" layoutX="28.0" layoutY="100.0" prefHeight="236.0" prefWidth="675.0">
+        <columns>
+          <TableColumn fx:id="appointment_IDCol" prefWidth="101.0" text="Appointment ID" />
+            <TableColumn fx:id="titleCol" prefWidth="86.0" text="Title" />
+            <TableColumn fx:id="typeCol" prefWidth="103.0" text="Type" />
+            <TableColumn fx:id="descriptionCol" prefWidth="134.0" text="Description" />
+            <TableColumn fx:id="startCol" text="Start" />
+            <TableColumn fx:id="endCol" prefWidth="92.0" text="End" />
+            <TableColumn fx:id="customer_IDCol" text="Customer ID" />
+        </columns>
+      </TableView>
+      <ButtonBar layoutY="334.0" prefHeight="66.0" prefWidth="703.0">
+        <buttons>
+          <Button mnemonicParsing="false" onAction="#onClickRefresh" text="Refresh" />
+            <Button mnemonicParsing="false" onAction="#onClickExitScreenReportContactSchedule" prefHeight="25.0" prefWidth="230.0" text="Exit Screen" />
+        </buttons>
+      </ButtonBar>
+   </children>
+</AnchorPane>

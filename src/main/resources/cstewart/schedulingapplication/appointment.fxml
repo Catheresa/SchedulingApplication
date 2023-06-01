@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="406.0" prefWidth="936.0" style="-fx-background-color: #2f98ed;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cstewart.schedulingapplication.controller.Appointment_Controller">
+    <children>
+        <Label layoutX="12.0" layoutY="13.0" prefHeight="40.0" prefWidth="162.0" text="Appointments" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+      <RadioButton fx:id="radioBtnAllView" layoutX="662.0" layoutY="18.0" mnemonicParsing="false" onAction="#onToggleRadioBtnAllView" prefHeight="35.0" prefWidth="64.0" selected="true" text="All View" textFill="WHITE">
+         <toggleGroup>
+            <ToggleGroup fx:id="tgView" />
+         </toggleGroup></RadioButton>
+        <RadioButton fx:id="radioBtnWeekView" layoutX="735.0" layoutY="18.0" mnemonicParsing="false" onAction="#onToggleRadioBtnWeekView" prefHeight="35.0" prefWidth="80.0" text="Week View" textFill="WHITE" toggleGroup="$tgView" />
+        <RadioButton fx:id="radioBtnMonthView" layoutX="828.0" layoutY="18.0" mnemonicParsing="false" onAction="#onToggleRadioBtnMonthView" prefHeight="35.0" prefWidth="86.0" text="Month View" textFill="WHITE" toggleGroup="$tgView" />
+        <TableView fx:id="appointmentTbl" layoutX="11.0" layoutY="65.0" prefHeight="280.0" prefWidth="903.0">
+            <columns>
+                <TableColumn fx:id="appointmentIDCol" prefWidth="41.99996757507324" text="ID" />
+                <TableColumn fx:id="appointmentTitleCol" prefWidth="108.40003204345703" text="Title" />
+                <TableColumn fx:id="appointmentDescriptionCol" prefWidth="102.39996337890625" text="Description" />
+                <TableColumn fx:id="appointmentLocationCol" prefWidth="136.0" text="Location" />
+            <TableColumn fx:id="appointmentContactCol" prefWidth="105.0" text="Contact" />
+                <TableColumn fx:id="appointmentTypeCol" prefWidth="70.39999389648438" text="Type" />
+                <TableColumn fx:id="appointmentStartCol" prefWidth="100.800048828125" text="Start" />
+                <TableColumn fx:id="appointmentEndCol" prefWidth="102.4000244140625" text="End" />
+                <TableColumn fx:id="appointmentCustomerIDCol" prefWidth="75.0" text="Customer ID" />
+                <TableColumn fx:id="appointmentUserIDCol" prefWidth="65.5999755859375" text="User ID" />
+            </columns>
+        </TableView>
+        <ButtonBar layoutX="10.0" layoutY="352.0" prefHeight="40.0" prefWidth="903.0">
+            <buttons>
+                <Button mnemonicParsing="false" onAction="#onClickAppointmentAdd" prefWidth="50.0" text="Add">
+                    <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                    </font></Button>
+                <Button mnemonicParsing="false" onAction="#onClickAppointmentUpdate" prefWidth="50.0" text="Update">
+                    <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                    </font></Button>
+                <Button mnemonicParsing="false" onAction="#onClickAppointmentDelete" text="Delete">
+                    <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                    </font></Button>
+            <Button mnemonicParsing="false" onAction="#onClickCustomers" prefWidth="90.0" text="Customers">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#onClickReports" text="Reports">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Button>
+                <Button minWidth="18.0" mnemonicParsing="false" onAction="#onClickAppointmentExit" text="Exit Screen">
+                    <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                    </font></Button>
+            </buttons>
+        </ButtonBar>
+    </children>
+</AnchorPane>

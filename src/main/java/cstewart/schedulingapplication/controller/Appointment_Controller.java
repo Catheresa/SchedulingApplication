@@ -22,12 +22,9 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/** A class that allows a user to view appointments and navigate to other screens. */
 public class Appointment_Controller implements Initializable {
-
-
     // The radio buttons where user can toggle between a view of appointments by week or month:
-    @FXML private ToggleGroup tgView;
-    @FXML private RadioButton radioBtnAllView;
     @FXML private ToggleButton radioBtnWeekView;
     @FXML private ToggleButton radioBtnMonthView;
 
@@ -46,8 +43,50 @@ public class Appointment_Controller implements Initializable {
 
     Appointment selectedAppointment;
 
-    /** A method that loads the add appointment screen when the user clicks on"Add" button.
-     * @param actionEvent go to add appointment screen. */
+    /** A method that loads all appointments when the user toggles the "All" view radio button.
+     @param actionEvent go to a non-filtered appointment screen.
+     */
+    public void onToggleRadioBtnAllView(ActionEvent actionEvent) throws IOException {
+        try {
+            Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/appointment.fxml"));
+            Scene customerScene = new Scene(customerScreen);
+            Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            customerStage.setScene(customerScene);
+            customerStage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** A method that loads all that weeks appointments when the user toggles the "Week" view radio button.
+     @param actionEvent go to a filtered list of appointments screen.
+     */
+    public void onToggleRadioBtnWeekView(ActionEvent actionEvent) throws SQLException {
+        try {
+            if(radioBtnWeekView.isSelected()){
+                appointmentTbl.setItems(Appointment_DAO.getView(7));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** A method that loads that months appointments when the user toggles the "Month" view radio button.
+     @param actionEvent go to a filtered list of appointments screen.
+     */
+    public void onToggleRadioBtnMonthView(ActionEvent actionEvent) {
+        try {
+            if(radioBtnMonthView.isSelected()){
+                appointmentTbl.setItems(Appointment_DAO.getView(30));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** A method that loads the add appointment screen when the user clicks on the "Add" button.
+     @param actionEvent go to add appointment screen.
+     */
     @FXML
     void onClickAppointmentAdd(ActionEvent actionEvent) throws IOException {
         Parent addAppointmentScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/addAppointment.fxml"));
@@ -56,9 +95,10 @@ public class Appointment_Controller implements Initializable {
         addAppointmentStage.setScene(addAppointmentScene);
         addAppointmentStage.show();
     }
-    /** A method that allows a user to select an appointment to update by selecting an appointment and then pressing the update button.
-     User will be taken to the update appointment screen. If no appointment has been selected, an error box will appear.
-     @param actionEvent go to update appointment screen. */
+
+    /** A method that allows a user to select an appointment to update. If no appointment has been selected, an error box will appear.
+     @param actionEvent go to update appointment screen.
+     */
     @FXML
     void onClickAppointmentUpdate(ActionEvent actionEvent) throws IOException {
         Appointment myAppt = appointmentTbl.getSelectionModel().getSelectedItem();
@@ -84,11 +124,22 @@ public class Appointment_Controller implements Initializable {
             loginError.show();
         }
     }
+
     /** A method that allows a user to delete a selected appointment.
-     @param actionEvent to delete a selected appointment. */
+     @param actionEvent to delete a selected appointment.
+     */
     @FXML
     void onClickAppointmentDelete(ActionEvent actionEvent) throws IOException, SQLException {
         selectedAppointment = appointmentTbl.getSelectionModel().getSelectedItem();
+
+        if(selectedAppointment == null) {
+            Alert alert3 = new Alert(Alert.AlertType.INFORMATION);
+            alert3.setTitle("Selection Error");
+            alert3.setHeaderText("Item must be selected.");
+            alert3.setContentText("Select an item from the list to be deleted");
+            alert3.showAndWait();
+            return;
+        }
         int selectedAppointmentID = selectedAppointment.getAppointment_ID();
         int referenceAppointmentID = selectedAppointmentID;
         String referenceType = selectedAppointment.getType();
@@ -101,31 +152,27 @@ public class Appointment_Controller implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                Appointment_DAO.deleteFromDBByAppointmentID(selectedAppointmentID);
+                Appointment_DAO.deleteFromDatabaseByAppointmentID(selectedAppointmentID);
                 Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
                 alert2.setTitle("Appointment Deletion");
                 alert2.setHeaderText("Deleted");
                 alert2.setContentText("The selected appointment ID: " + referenceAppointmentID + " " + referenceType + " has been deleted.");
                 alert2.showAndWait();
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally{
             Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/appointment.fxml"));
             Scene customerScene = new Scene(customerScreen);
             Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             customerStage.setScene(customerScene);
             customerStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+
     }
 
-    /** A method that allows the user to exit the application.
-     * @param actionEvent to exit the application. */
-    @FXML
-    void onClickAppointmentExit(ActionEvent actionEvent) throws IOException {
-        Platform.exit();
-    }
-    // load the Appointment Table
+
+    /** A method that helps load appointment data to the appointment table. */
     @FXML
     private void loadAppointmentTable() {
         try {
@@ -149,40 +196,9 @@ public class Appointment_Controller implements Initializable {
         }
     }
 
-    public void onToggleRadioBtnAllView(ActionEvent actionEvent) throws IOException {
-        try {
-            Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/appointment.fxml"));
-            Scene customerScene = new Scene(customerScreen);
-            Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            customerStage.setScene(customerScene);
-            customerStage.show();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void onToggleRadioBtnWeekView(ActionEvent actionEvent) throws SQLException {
-        try {
-            if(radioBtnWeekView.isSelected()){
-                appointmentTbl.setItems(Appointment_DAO.getView(7));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void onToggleRadioBtnMonthView(ActionEvent actionEvent) {
-        try {
-            if(radioBtnMonthView.isSelected()){
-                Appointment_DAO.getView(30);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /** A method that loads the customer screen when the user clicks on"Customers" button.
-     * @param actionEvent go to the Customer  screen. */
+    /** A method that loads the customer screen when the user clicks on "Customers" button.
+     @param actionEvent go to the customer screen.
+     */
     @FXML
     public void onClickCustomers(ActionEvent actionEvent) throws IOException {
         Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
@@ -191,8 +207,10 @@ public class Appointment_Controller implements Initializable {
         customerStage.setScene(customerScene);
         customerStage.show();
     }
-    /** A method that loads the report options screen when the user clicks on"Reports" button.
-     * @param actionEvent go to the report options screen. */
+
+    /** A method that loads the report options screen when the user clicks on "Reports" button.
+     @param actionEvent go to the report options screen.
+     */
     @FXML
     public void onClickReports(ActionEvent actionEvent) throws IOException {
         Parent reportOptionsScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportOptions.fxml"));
@@ -202,11 +220,18 @@ public class Appointment_Controller implements Initializable {
         reportOptionsStage.show();
     }
 
+    /** A method that allows the user to exit the application.
+     @param actionEvent to exit the application.
+     */
+    @FXML
+    void onClickAppointmentExit(ActionEvent actionEvent) throws IOException {
+        Platform.exit();
+    }
+
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadAppointmentTable();
 
     }
-
-
 }

@@ -14,13 +14,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
+/** A class used to identify and manipulate database fields related to geographical data. */
 public class Geographical_DAO {
 
     private static final ObservableList<Division> allDivisions = FXCollections.observableArrayList();
     private static final ObservableList<Country> allCountries = FXCollections.observableArrayList();
 
+    /** A method to obtain a list of all divisions ID's, divisions, and country ID's.
+     @return a list of divisions. */
     public static ObservableList<Division> getAllDivisions() throws SQLException {
-
         if(allDivisions.isEmpty()) {
             try {
                 String sqlQuery = "SELECT * FROM client_schedule.first_level_divisions";
@@ -33,49 +35,19 @@ public class Geographical_DAO {
                             resultSet.getString("division"),
                             resultSet.getInt("country_ID")));
                 }
-
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } finally {
                 return allDivisions;
-                //JDBC_DAO.closeConnection();
             }
         }
         return allDivisions;
     }
-//    public static Division identifyCountryByDivision(int divisionID) throws SQLException {
-//        ObservableList<Division> identifiedDivision = getAllDivisions();
-//        int customerCountry = 1;
-//
-//        for (int i = 0; i < allDivisions.size(); i++) {
-//            int identifiedCountry = allDivisions.get(i).getCountry_ID();
-////            if (searchedCountry.getDivision_ID() == divisionID) {
-////                int  customerDivision = searchedCustomer.getDivision_ID();
-////                if(customerDivision >= 54 && customerDivision <= 72 ){
-////                    customerCountry = 2;
-////                }else if(customerDivision >=101 && customerDivision <= 104){
-////                    customerCountry = 3;
-////                }else{customerCountry = 1;}
-////            }
-//        } return customerCountry;
-//    }
-    //Lambda
-//    public static ObservableList<Division> getDivisionsByCountry(int country_ID) throws SQLException {
-//        //could do lambda here.
-//        ObservableList<Division> filteredList = FXCollections.observableArrayList();
-//        try {
-//            for(Division div: getAllDivisions()){
-//                if(div.getCountry_ID() == country_ID){
-//                    filteredList.add(div);
-//                }
-//            }
-//        } catch (SQLException e) {
-////            throw new RuntimeException(e);
-//            throw e;
-//        }
-//        return filteredList;
 
-
+    /** A method to obtain a country based on a division ID.
+     @param division_ID returns a country by division ID.
+     @return a country based on division.
+     */
     public static Country getCountryByDivision(int division_ID){
         try {
             String sqlQuery = "SELECT * FROM countries as c inner join first_Level_Divisions as d on c.country_ID = d.country_ID AND d.division_ID = ?";
@@ -95,6 +67,10 @@ public class Geographical_DAO {
         return  null;
     }
 
+    /** Lambda Expression - A method to get all states/divisions by the country ID.
+     @param country_ID list divisions by country ID.
+     @return a list of state/provinces by country.
+     */
     public static ObservableList<Division> getAllDivisionsByCountry(int country_ID) throws SQLException {
         ObservableList<Division>  list = getAllDivisions().stream()
                 .filter(d -> d.getCountry_ID() == country_ID)
@@ -102,6 +78,9 @@ public class Geographical_DAO {
         return list;
     }
 
+    /** A method to get a list of states/provinces (divisions).
+     @return a list of states/provinces.
+     */
     public static ObservableList<String> getDivisions() throws SQLException {
         ObservableList<String> filteredDivisionList = FXCollections.observableArrayList();
         ObservableList<Division> allDivisions = getAllDivisions();
@@ -120,6 +99,10 @@ public class Geographical_DAO {
         }
     }
 
+    /** A method to query the SQL database and return division data by ID.
+     @param division_ID returns division data by ID.
+     @return a state/province based on a division ID.
+     */
     public static Division getDivision(int division_ID){
         try {
             String sqlQuery = "SELECT * FROM first_Level_Divisions WHERE division_ID = ?";
@@ -140,7 +123,9 @@ public class Geographical_DAO {
         return  null;
     }
 
-
+    /** A method to query the SQL database and return a list of all countries.
+     @return a list of all countries.
+     */
     public static ObservableList<Country> getAllCountries() throws SQLException{
         try {
             String sqlQuery = "SELECT * FROM client_schedule.countries";
@@ -157,23 +142,4 @@ public class Geographical_DAO {
         }
         return  allCountries;
     }
-    public static ObservableList<Division> lookupDivision(String division) throws SQLException {
-        ObservableList<Division> filteredDivisionList = FXCollections.observableArrayList();
-        ObservableList<Division> allDivisions = getAllDivisions();
-
-        try {
-            for (int i = 0; i < allDivisions.size(); i++) {
-                Division searchedDivision= allDivisions .get(i);
-
-                if (searchedDivision.getDivision().equals(division)) {
-                    filteredDivisionList .add(searchedDivision);
-                }
-            }
-            return filteredDivisionList ;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
 }

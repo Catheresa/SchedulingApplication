@@ -17,33 +17,32 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/** A class that allows a user to update and existing customer. */
 public class UpdateCustomer_Controller implements Initializable {
-    @FXML public TextField txtCustomerID;
+    // Combo boxes for dropdown selections.
     @FXML public ComboBox<Country> cbCountry;
-    @FXML public TextField txtName;
-    @FXML public TextField txtAddress;
     @FXML public ComboBox<Division> cbStateProvince;
-    @FXML public TextField txtPostalCode;
+
+    // Text fields for updating customer details.
+    @FXML public TextField txtAddress;
+    @FXML public TextField txtCustomerID;
+    @FXML public TextField txtName;
     @FXML public TextField txtPhone;
-    //Buttons to update data or move to a new screen
-    @FXML public Button btnAppointment;
-    @FXML public Button btnUpdateCustomer;
-    @FXML public Button btnExitScreen;
+    @FXML public TextField txtPostalCode;
 
     Customer identifiedCustomer;
-    Country identifiedCountry;
-//    int identifiedCountry;
 
+    /** A method utilized to send selected customer data to the "UpdateCustomer" screen.
+     @param customer send selected customer to the update customer screen.
+     */
     @FXML
     public void sendCustomer(Customer customer) throws SQLException {
         identifiedCustomer = customer;
-//        identifiedCountry = DAO.Customer_DAO.identifyCustomerCountry(identifiedCustomer.getCustomer_ID());
-//        cbStateProvince.setItems(DAO.Geographical_DAO.getAllDivisions());
+
         Country tempCountry = Geographical_DAO.getCountryByDivision(customer.getDivision_ID());
         cbCountry.setValue(tempCountry);
         cbStateProvince.setItems(Geographical_DAO.getAllDivisionsByCountry(tempCountry.getCountry_ID()));
@@ -54,9 +53,11 @@ public class UpdateCustomer_Controller implements Initializable {
         txtAddress.setText(String.valueOf(identifiedCustomer.getAddress()));
         txtPostalCode.setText(String.valueOf(identifiedCustomer.getPostal_Code()));
         txtPhone.setText(String.valueOf(identifiedCustomer.getPhone()));
-
     }
 
+    /** A method utilized to return to the customer screen without making changes.
+     @param actionEvent return to the customer screen.
+     */
     @FXML
     public void onClickExitScreen(ActionEvent actionEvent) throws IOException {
         Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
@@ -65,14 +66,10 @@ public class UpdateCustomer_Controller implements Initializable {
         customerStage.setScene(customerScene);
         customerStage.show();
     }
-    @FXML
-    public void onClickAppointment(ActionEvent actionEvent) throws IOException {
-        Parent appointmentScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/appointment.fxml"));
-        Scene appointmentScene = new Scene(appointmentScreen);
-        Stage appointmentStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        appointmentStage.setScene(appointmentScene);
-        appointmentStage.show();
-    }
+
+    /** A method utilized to load the "State/Prov" combo box based on the country selected.
+     @param actionEvent provide corresponding states or province based on the country selected.
+     */
     @FXML
     public void onSelectCountry(ActionEvent actionEvent) {
         int country_ID = cbCountry.getValue().getCountry_ID();
@@ -84,36 +81,32 @@ public class UpdateCustomer_Controller implements Initializable {
         }
     }
 
-    @FXML
-    public void onSelectStateProvince(ActionEvent actionEvent) {
-    }
+    /** A method utilized to update customer data in the SQL database.
+     @param actionEvent update customer data in the SQL database.
+     */
     @FXML
     public void onClickUpdateCustomer(ActionEvent actionEvent) throws IOException {
         String tempContactName = txtName.getText();
         String tempAddress = txtAddress.getText();
         String tempPostalCode = txtPostalCode.getText();
         String tempPhone = txtPhone.getText();
-        Timestamp tempCreate_Date = new Timestamp(System.currentTimeMillis());;
-        String tempCreated_By = "script";
-        Timestamp tempLastUpdate = new Timestamp(System.currentTimeMillis());;
-        String tempLastUpdated_By = "script";
-        int tempDivisionID = cbCountry.getValue().getCountry_ID();
+        int tempStateProvince = cbStateProvince.getValue().getDivision_ID();
         int tempID = Integer.parseInt(txtCustomerID.getText());
 
         try {
-            DAO.Customer_DAO.updateCustomer(tempContactName,tempAddress, tempPostalCode, tempPhone,tempCreate_Date,tempCreated_By, tempLastUpdate,
-                    tempLastUpdated_By,tempDivisionID, tempID);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
+            DAO.Customer_DAO.updateCustomer(tempContactName,tempAddress, tempPostalCode, tempPhone,tempStateProvince, tempID);
+
             Parent optionScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
             Scene optionScene = new Scene(optionScreen);
             Stage optionStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             optionStage.setScene(optionScene);
             optionStage.show();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try{
@@ -127,9 +120,6 @@ public class UpdateCustomer_Controller implements Initializable {
 
         }catch (SQLException e){
             Logger.getLogger(AddCustomer_Controller.class.getName()).log(Level.SEVERE, null, e);
-
         }
     }
-
-
 }

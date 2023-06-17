@@ -7,11 +7,14 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
+/** A class that allows a user to view report options and navigate to the desired report. */
 public class ReportOptions_Controller {
 
+    /** A method that navigates the user to the report that provides the schedule for the selected contact.
+     @param actionEvent navigates to the reportContactSchedule screen.
+     */
     @FXML
     public void onClickContactReportOptions(ActionEvent actionEvent) throws IOException {
         Parent reportContactScheduleScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportContactSchedule.fxml"));
@@ -20,6 +23,10 @@ public class ReportOptions_Controller {
         reportContactScheduleStage.setScene(reportContactScheduleScene);
         reportContactScheduleStage.show();
     }
+
+    /** A method that navigates the user to the report that provides the customer list by selected state/division.
+     @param actionEvent navigates to the reportCustomersByDivision screen.
+     */
     @FXML
     public void onClickCustomerByDivisionReportOptions(ActionEvent actionEvent) throws IOException {
         Parent reportLocationScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportCustomersByDivision.fxml"));
@@ -28,6 +35,10 @@ public class ReportOptions_Controller {
         reportLocationStage.setScene(reportLocationScene);
         reportLocationStage.show();
     }
+
+    /** A method that navigates the user to the report that provides the total number of customers by type and month.
+     @param actionEvent navigates to the reportTotalCustomers screen.
+     */
     @FXML
     public void onClickTypeReportOptions(ActionEvent actionEvent) throws IOException {
         Parent reportTotalCustomersScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportTotalCustomers.fxml"));
@@ -36,6 +47,9 @@ public class ReportOptions_Controller {
         reportTotalCustomersStage.setScene(reportTotalCustomersScene);
         reportTotalCustomersStage.show();
     }
+    /** A method that exits the screen.
+     @param actionEvent navigates to the customers screen.
+     */
     @FXML
     public void onClickExitScreenReportOptions(ActionEvent actionEvent) throws IOException {
         Parent appointmentScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));

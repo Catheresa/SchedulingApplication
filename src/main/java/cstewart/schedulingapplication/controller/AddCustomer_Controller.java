@@ -16,71 +16,58 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.time.ZoneId;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/** A class that allows a user to add a customer to the database. */
 public class AddCustomer_Controller implements Initializable {
-    @FXML public TextField txtCustomerID;
-    @FXML public ComboBox<Country> cbCountry;
-    @FXML public TextField txtName;
-    @FXML public TextField txtAddress;
-    @FXML public ComboBox<Division> cbStateProvince;
-    @FXML public TextField txtPostalCode;
-    @FXML public TextField txtPhone;
-    @FXML public Button btnAddCustomer;
-    @FXML public Button btnExitScreen;
+    // Combo boxes for dropdown selections.
+    @FXML private ComboBox<Country> cbCountry;
+    @FXML private ComboBox<Division> cbStateProvince;
 
-    /** A method that allows user to exit screen and go back to the customer screen.
-     * *
-     * @param actionEvent to exit screen and go back to the customer screen. */
-    @FXML
-    public void onClickExitScreen(ActionEvent actionEvent) throws IOException {
-        Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
-        Scene customerScene = new Scene(customerScreen);
-        Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        customerStage.setScene(customerScene);
-        customerStage.show();
-    }
+    // Text fields for adding customer details.
+    @FXML private TextField txtAddress;
+    @FXML private TextField txtName;
+    @FXML private TextField txtPhone;
+    @FXML private TextField txtPostalCode;
 
-    /** A method that allows user to go to the appointment screen.
-     * *
-     * @param actionEvent to go to the appointment screen. */
-    @FXML
-    public void onClickAppointment(ActionEvent actionEvent) throws IOException {
-        Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/appointment.fxml"));
-        Scene customerScene = new Scene(customerScreen);
-        Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        customerStage.setScene(customerScene);
-        customerStage.show();
-    }
-
+    /** A method that allows user to add a customer to the database.
+     @param actionEvent to add customer.
+     */
     @FXML
     public void onClickAddCustomer(ActionEvent actionEvent) throws IOException {
         try {
-            ZoneId myZoneId = ZoneId.systemDefault();
-            ZoneId utcZoneId = ZoneId.of("UTC");
             String tempCustomerName = txtName.getText();
             String tempAddress = txtAddress.getText();
             String tempPostalCode = txtPostalCode.getText();
             String tempPhone = txtPhone.getText();
-            Timestamp tempCreatedDate = new Timestamp(System.currentTimeMillis());
-            String tempCreated_By = "script";
-            Timestamp tempUpdatedDate = new Timestamp(System.currentTimeMillis());
-            String tempLast_Updated_By = "script";
-            int tempDivision_ID = cbCountry.getValue().getCountry_ID();
 
-            // FIX ME!  TIME CONVERSION ISSUES
-            DAO.Customer_DAO.addCustomer(tempCustomerName,tempAddress, tempPostalCode,tempPhone, tempCreatedDate,tempCreated_By,tempUpdatedDate,tempLast_Updated_By,tempDivision_ID);
+            if ((cbCountry.getValue() == null) || (cbStateProvince.getValue() == null) || (cbCountry.getValue() == null) ||
+                    (txtName.getText().isEmpty()) || (txtAddress.getText().isEmpty()) || (txtPostalCode.getText().isEmpty() ||
+                    (txtPhone.getText().isEmpty()))) {
+
+                Alert selectionError = new Alert(Alert.AlertType.ERROR);
+                selectionError.setTitle("Selection Error");
+                selectionError.setHeaderText("Retry");
+                selectionError.setContentText("Please ensure that a country and state/province is selected and all fields are populated.");
+                selectionError.showAndWait();
+
+                return;
+
+            } else {
+                int tempStateProvince_ID = cbStateProvince.getValue().getDivision_ID();
+                DAO.Customer_DAO.addCustomer(tempCustomerName, tempAddress, tempPostalCode, tempPhone, tempStateProvince_ID);
+
+                Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
+                Scene customerScene = new Scene(customerScreen);
+                Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                customerStage.setScene(customerScene);
+                customerStage.show();
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally{
-            Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
-            Scene customerScene = new Scene(customerScreen);
-            Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            customerStage.setScene(customerScene);
-            customerStage.show();
         }
     }
 
@@ -94,6 +81,18 @@ public class AddCustomer_Controller implements Initializable {
         }
     }
 
+    /** A method that allows user to exit screen and go back to the customer screen.
+     * @param actionEvent to exit screen and go back to the customer screen. */
+    @FXML
+    public void onClickExitScreen(ActionEvent actionEvent) throws IOException {
+        Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
+        Scene customerScene = new Scene(customerScreen);
+        Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        customerStage.setScene(customerScene);
+        customerStage.show();
+    }
+
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 

@@ -1,12 +1,12 @@
 package cstewart.schedulingapplication.controller;
 
-import DAO.Contact_DAO;
-import DAO.Customer_DAO;
+import DAO.Appointment_DAO;
 import DAO.UserLogin_DAO;
 import cstewart.schedulingapplication.model.Appointment;
 import cstewart.schedulingapplication.model.Contact;
 import cstewart.schedulingapplication.model.Customer;
 import cstewart.schedulingapplication.model.User;
+import cstewart.schedulingapplication.utility.TimeHelper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,36 +17,36 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ResourceBundle;
 
+/** A class that allows a user to update an existing appointment. */
 public class UpdateAppointment_Controller implements Initializable {
-
-
+    // Combo boxes for dropdown selections.
     @FXML private ComboBox<Contact> contactNameCB;
-    @FXML private TextField txtAppointmentId;
-    @FXML private TextField txtTitle;
-    @FXML private TextField txtDescription;
-    @FXML private TextField txtLocation;
-    @FXML private TextField txtType;
-    @FXML private DatePicker datePicker;
-    @FXML private ComboBox<LocalTime> startTimeCB;
-    @FXML private ComboBox<LocalTime> endTimeCB;
     @FXML private ComboBox<Customer> customerIDCB;
+    @FXML private ComboBox<LocalTime> endTimeCB;
+    @FXML private ComboBox<LocalTime> startTimeCB;
     @FXML private ComboBox<User> userIDCB;
 
-    Appointment identifiedAppointment;
-    Contact identifiedContact;
+    // Text fields for updating appointment details.
+    @FXML private TextField txtAppointmentId;
+    @FXML private TextField txtDescription;
+    @FXML private TextField txtLocation;
+    @FXML private TextField txtTitle;
+    @FXML private TextField txtType;
 
-//    /** A method utilized to send appointment data to the "UpdateAppointment" screen.
-//     * @param appointment send appointment to the update appointment screen. */
+    // Date picker for user to select date.
+    @FXML private DatePicker datePicker;
+
+    Appointment identifiedAppointment;
+
+    /** A method utilized to send selected appointment data to the "UpdateAppointment" screen.
+     @param appointment send selected appointment to the update appointment screen.
+     */
     @FXML
     public void sendAppointment(Appointment appointment) throws SQLException {
         identifiedAppointment = appointment;
@@ -60,18 +60,26 @@ public class UpdateAppointment_Controller implements Initializable {
         startTimeCB.setValue(appointment.getStart().toLocalTime());
         endTimeCB.setValue(appointment.getEnd().toLocalTime());
 
-        try {
-            customerIDCB.setValue(Customer_DAO.lookupCustomer(appointment.getCustomer_ID()));
-            // FIX ME!  Why isn't it loading the contact into the update appointment screen?
-            contactNameCB.setValue(Contact_DAO.lookupContact(appointment.getContact_ID()));
-            userIDCB.setValue(UserLogin_DAO.lookupUser(appointment.getUser_ID()));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        for(Contact contact : contactNameCB.getItems()){
+            if(appointment.getContact_ID() == contact.getContact_ID()){
+                contactNameCB.setValue(contact);
+            }
+        }
+        for(Customer customer : customerIDCB.getItems()){
+            if(appointment.getCustomer_ID() == customer.getCustomer_ID()){
+                customerIDCB.setValue(customer);
+            }
+        }
+        for(User user : userIDCB.getItems()){
+            if(appointment.getUser_ID() == user.getUser_ID()){
+                userIDCB.setValue(user);
+            }
         }
     }
 
-    /** A method utilized to exit the "UpdateAppointment" screen.
-     * @param actionEvent to send user back to the appointment screen. */
+    /** A method utilized to return to the appointment screen without making changes.
+     @param actionEvent to return to the appointment screen.
+     */
     @FXML
     public void onClickExitScreen(ActionEvent actionEvent) throws IOException {
         Parent appointmentScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/appointment.fxml"));
@@ -81,6 +89,9 @@ public class UpdateAppointment_Controller implements Initializable {
         appointmentStage.show();
     }
 
+    /** A method utilized to update an existing appointment in the database.
+     @param actionEvent to update appointment in the database.
+     */
     public void onClickUpdateAppointment(ActionEvent actionEvent) throws IOException {
         int tempAppointmentID = Integer.parseInt(txtAppointmentId.getText());
         String tempTitle = txtTitle.getText();
@@ -90,19 +101,26 @@ public class UpdateAppointment_Controller implements Initializable {
         LocalDate tempDate = datePicker.getValue();
         LocalTime tempStart = (LocalTime) startTimeCB.getValue();
         LocalTime tempEnd =  (LocalTime) endTimeCB.getValue();
-        Timestamp tempCreate_Date = new Timestamp(System.currentTimeMillis());
-        String tempCreated_By = "script";
-        Timestamp tempUpdate_Date = new Timestamp(System.currentTimeMillis());
-        String tempUpdated_By = "script";
 
         int tempCustomerID = customerIDCB.getValue().getCustomer_ID();
         int tempUserID = userIDCB.getValue().getUser_ID();
         int tempContactID = contactNameCB.getValue().getContact_ID();
+
         LocalDateTime myLDTStart = LocalDateTime.of(tempDate, tempStart);
         LocalDateTime myLDTEnd = LocalDateTime.of(tempDate, tempEnd);
 
-        DAO.Appointment_DAO.updateAppointment(tempAppointmentID,tempTitle,tempDescription,tempLocation,tempType,myLDTStart,myLDTEnd,tempCreate_Date,
-                tempCreated_By,tempUpdate_Date,tempUpdated_By,tempCustomerID, tempUserID, tempContactID);
+        if(!Appointment_DAO.isOverlappingAppointment(tempDate, tempStart, tempEnd,tempCustomerID,tempAppointmentID)){
+            DAO.Appointment_DAO.updateAppointment(tempAppointmentID,tempTitle,tempDescription,tempLocation,tempType,
+                    myLDTStart,myLDTEnd,tempCustomerID, tempUserID, tempContactID);
+        }else {
+            Alert overlapExists = new Alert(Alert.AlertType.ERROR);
+            overlapExists.setTitle("Appointment Overlap");
+            overlapExists.setHeaderText("Retry");
+            overlapExists.setContentText("An appointment already exists for this time slot.");
+            overlapExists.showAndWait();
+
+            return;
+        }
 
         Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/appointment.fxml"));
         Scene customerScene = new Scene(customerScreen);
@@ -111,19 +129,23 @@ public class UpdateAppointment_Controller implements Initializable {
         customerStage.show();
     }
 
-    public void onSelectContactName(ActionEvent actionEvent) {
-
-    }
-
+    /** A method utilized to clear the selections made to the dropdowns in the update appointment screen.
+     @param actionEvent to clear selections.
+     */
     public void onClickClearSelections(ActionEvent actionEvent) {
         contactNameCB.getSelectionModel().clearSelection();
         customerIDCB.getSelectionModel().clearSelection();
         userIDCB.getSelectionModel().clearSelection();
     }
 
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+
+            startTimeCB.setItems(TimeHelper.getStartTimeList()); //ToDo: Juan, is this what you meant by needing to call CB's 1st & then set default values?
+            endTimeCB.setItems(TimeHelper.getEndTimeList());
+
             ObservableList<Contact> allContacts = DAO.Contact_DAO.getAllContacts();
             contactNameCB.setItems(allContacts);
             contactNameCB.setVisibleRowCount(5);
@@ -139,16 +161,6 @@ public class UpdateAppointment_Controller implements Initializable {
             userIDCB.setVisibleRowCount(5);
             userIDCB.setPromptText("Select User ID");
 
-            LocalTime tempStart = LocalTime.of(8,0);
-            LocalTime tempEnd = LocalTime.of(20,0);
-
-            for(int i=0; i <24; i++){
-                startTimeCB.getItems().add(LocalTime.of(i,0));
-                if(i < 23){
-                    endTimeCB.getItems().add(LocalTime.of(i+1,0));
-                }
-            }
-            endTimeCB.getItems().add(LocalTime.of(0,0));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

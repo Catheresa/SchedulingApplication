@@ -5,9 +5,12 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-
+/** A class created to notate when a user has logged in successfully or not. */
 public class FileIOMain {
 
+    /** A method to record login attempts to a .txt file.
+     @param username along with whether the attempt was successful gets written into the .txt file.
+     */
     public static void writeToFileLog(String username, boolean successful) throws IOException{
         // Filename variable
         String filename = "login_Activity.txt";

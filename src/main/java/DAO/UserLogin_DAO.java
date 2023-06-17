@@ -9,9 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
+/** A class used to identify and manipulate database fields for user and login information. */
 public class UserLogin_DAO {
     private static final ObservableList<User> allUsers = FXCollections.observableArrayList();
 
+    /** A method to obtain a list of all users data from the SQL database.
+     @return a list of all users.
+     */
     public static ObservableList<User> getAllUsers() throws SQLException {
         if(allUsers.isEmpty()) {
             String sqlQuery = "SELECT * FROM client_schedule.users";
@@ -28,17 +32,11 @@ public class UserLogin_DAO {
         return allUsers;
     }
 
-    public static User lookupUser(int userID) throws SQLException {
-        User user = null;
-        ObservableList<User> list = getAllUsers().stream().filter(user1 -> user1.getUser_ID() == userID)
-                .collect(Collectors.toCollection(FXCollections::observableArrayList));
-        if(list.size() > 0){
-            user = list.get(0);
-        }
-
-        return user;
-    }
-    public static User loginValid(String userName, String pass) throws SQLException {
+    /** A method that determines if valid credentials were entered to gain access to the program.
+     @param userName along with password to validate login.
+     @return a user.
+     */
+    public static User validUser(String userName, String pass) throws SQLException {
         String sqlQuery = "Select * FROM users WHERE BINARY User_Name = ? AND BINARY Password = ?";
 
         PreparedStatement ps = JDBC_DAO.getConnection().prepareStatement(sqlQuery);

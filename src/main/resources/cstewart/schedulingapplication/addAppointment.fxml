@@ -9,11 +9,6 @@
     <children>
         <ButtonBar layoutX="4.0" layoutY="433.0" prefHeight="47.0" prefWidth="516.0">
          <buttons>
-            <Button mnemonicParsing="false" onAction="#onClickClearSelections" text="Clear Selections">
-               <font>
-                  <Font name="System Bold Italic" size="12.0" />
-               </font>
-            </Button>
               <Button mnemonicParsing="false" onAction="#onClickAddAppointment" prefHeight="25.0" prefWidth="139.0" text="Add Appointment">
               <font>
                   <Font name="System Bold Italic" size="12.0" />

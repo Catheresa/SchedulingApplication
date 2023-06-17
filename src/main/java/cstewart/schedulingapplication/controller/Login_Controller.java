@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/** A class that allows a user to login to the program. */
 public class Login_Controller implements Initializable {
     @FXML private Label loginLBL;
     @FXML private Label userNameLBL;
@@ -35,19 +36,24 @@ public class Login_Controller implements Initializable {
 
     ResourceBundle rb = ResourceBundle.getBundle("language", Locale.getDefault());
 
+    /** A method that sets the label on the login screens based on the local computer's time zone. */
+    @FXML
     public void setLabel(String label){
         zoneIDLogin.setText(label);
     }
 
+    /** A method that verifies valid login credentials when the user clicks on the "Submit" button.
+     @param actionEvent login credential verification.
+     */
     @FXML
     public void onClickSubmitLogin(ActionEvent actionEvent) throws  SQLException {
         String pass = passwordLogin.getText();
         String userName = usernameLogin.getText();
-        User selectedUser = UserLogin_DAO.loginValid(userName,pass);
-        int selectedUserID = selectedUser.getUser_ID();
-        ObservableList<Appointment> searchForAppointments = Appointment_DAO.appointmentWithinMinutesOfLogin(selectedUserID);
+        User selectedUser = UserLogin_DAO.validUser(userName,pass);
+
         try {
-            if (selectedUser != null) {
+             if (selectedUser != null) {
+                 ObservableList<Appointment> searchForAppointments = Appointment_DAO.appointmentWithinMinutesOfLogin(selectedUser.getUser_ID());
                 if(searchForAppointments.size() > 0){
                     for(int i = 0; i < searchForAppointments.size(); i++){
                         Alert appointmentInMinutes = new Alert(Alert.AlertType.INFORMATION);
@@ -58,16 +64,20 @@ public class Login_Controller implements Initializable {
                                 searchForAppointments.get(i).getStart() + ".");
                         appointmentInMinutes.showAndWait();
                     }
-
+                }else{
+                    Alert noAppointmentInMinutes = new Alert(Alert.AlertType.INFORMATION);
+                    noAppointmentInMinutes.setTitle("Appointment Information!");
+                    noAppointmentInMinutes.setHeaderText("Appointments in minutes?");
+                    noAppointmentInMinutes.setContentText("There are no appointments for " +
+                                    userName + " within 15 minutes of login.");
+                    noAppointmentInMinutes.showAndWait();
                 }
-
                 Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
                 Scene customerScene = new Scene(customerScreen);
                 Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
                 customerStage.setScene(customerScene);
                 customerStage.show();
                 FileIOMain.writeToFileLog(userName,true);
-
             }else {
                 if (Locale.getDefault().getLanguage().equals("fr")) {
                     Alert loginError = new Alert(Alert.AlertType.ERROR);
@@ -88,9 +98,9 @@ public class Login_Controller implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -103,6 +113,5 @@ public class Login_Controller implements Initializable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -14,12 +14,12 @@
     <children>
         <ButtonBar layoutX="10.0" layoutY="442.0" prefHeight="64.0" prefWidth="514.0">
             <buttons>
-            <Button mnemonicParsing="false" onAction="#onClickClearSelections" text="Clear Selections">
-               <font>
-                  <Font name="System Bold Italic" size="12.0" />
-               </font>
-            </Button>
                 <Button mnemonicParsing="false" onAction="#onClickUpdateAppointment" prefHeight="25.0" prefWidth="139.0" text="Update Appointment">
+                    <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                    </font>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#onClickClearSelections" text="Clear Selections">
                     <font>
                         <Font name="System Bold Italic" size="12.0" />
                     </font>
@@ -125,7 +125,7 @@
             <padding>
                 <Insets bottom="5.0" top="5.0" />
             </padding></TextField>
-        <ComboBox fx:id="contactNameCB" layoutX="140.0" layoutY="80.0" onAction="#onSelectContactName" prefHeight="25.0" prefWidth="393.0" promptText="Select Contact Name">
+        <ComboBox fx:id="contactNameCB" layoutX="140.0" layoutY="80.0" prefHeight="25.0" prefWidth="393.0" promptText="Select Contact Name">
             <padding>
                 <Insets bottom="5.0" top="5.0" />
             </padding>

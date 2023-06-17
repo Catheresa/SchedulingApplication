@@ -8,24 +8,22 @@ import java.sql.*;
 import java.time.*;
 import java.lang.String;
 import java.time.temporal.ChronoUnit;
-
-
+//TODO: My DAO isn't appearing in javadocs index document in html so my lambda's aren't appearing.
+//TODO: how can I fix that?
+/** A class used to identify and manipulate database fields for appointments. */
 public class Appointment_DAO {
 
     private static final ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
     private static final ObservableList<Appointment> allAppointmentViews = FXCollections.observableArrayList();
     private static final ObservableList<Appointment> allCustomerAppointments = FXCollections.observableArrayList();
-//    private static final ObservableList<Appointment> allLocations = FXCollections.observableArrayList();
-//    private static final ObservableList<Appointment> allAppointmentsByTypeMonth = FXCollections.observableArrayList();
 
-    // Write code to provide an alert when there ia an appointment within 15 minutes of the user's log-in.
-    // A custom message should be displayed in the user interface and include: AppointmentID, date, and time.
-    // if user does not have any appointments within 15 minutes of logging in, display a custom message in the user...
-    // interface indicating there are no upcoming appointments.
+    /** A method utilized to identify if an appointment exists within 15 minutes of login and notify user, regardless
+     of outcome.
+     @param user_ID  lookup appointment by ID.
+     @return filtered list of appointments within minutes of login*/
     public static ObservableList<Appointment> appointmentWithinMinutesOfLogin(int user_ID) throws SQLException {
         ObservableList<Appointment> filteredApptWithinMinutesOfLogin = FXCollections.observableArrayList();
-
-        // This isn't working.  Will it work when I get it into the virtual environment?
+ //TODO: Per "The Little Things" I can't query the database as evaluators change their clocks but the DB clock does not change
         String sqlQuery = "SELECT * FROM appointments " +
                 "WHERE date(Start) BETWEEN now()" +
                 "AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)" +
@@ -43,14 +41,68 @@ public class Appointment_DAO {
         return filteredApptWithinMinutesOfLogin;
     }
 
-    // Method that provides data for the Appointment view based on the number of days provided by user selection.
-    public static ObservableList<Appointment> getView(int viewDays) throws SQLException {
+    /** A method to determine if there are any overlapping appointments.
+     @param tempDate along with tempStart, tempEnd, and tempCustomer_ID to identify overlapping appointments.
+     @return a boolean value stating whether an overlap exists.
+     */
+    public static boolean isOverlappingAppointment(LocalDate tempDate, LocalTime tempStart, LocalTime tempEnd, int tempCustomer_ID, int tempAppointment_ID) {  // supposed to be customer
+        boolean overlapExists = false;
+
+        // Convert tempDate and tempTime arguments into a single LocalDateTime object.
+        LocalDateTime startConverted = tempDate.atTime(tempStart);
+        LocalDateTime endConverted = tempDate.atTime(tempEnd);
+
+        // Convert Instant to a Timestamp which is used for a specific instant in time.
+        Timestamp bookAppointmentStart = Timestamp.valueOf(startConverted);
+        Timestamp bookAppointmentEnd = Timestamp.valueOf(endConverted);
+
+        try {
+            for (int i = 0; i < allAppointments.size(); i++) {
+                Appointment searchedAppointment = allAppointments.get(i);
+                if(searchedAppointment.getCustomer_ID()!=tempCustomer_ID || searchedAppointment.getAppointment_ID()==tempAppointment_ID){
+                    continue;
+                }
+                Timestamp existingAppointmentStart = Timestamp.valueOf(searchedAppointment.getStart());
+                Timestamp existingAppointmentEnd = Timestamp.valueOf(searchedAppointment.getEnd());
+
+                if((bookAppointmentStart.after(existingAppointmentStart) && bookAppointmentStart.before(existingAppointmentEnd) ||
+                        bookAppointmentStart.equals(existingAppointmentStart))
+                        && (bookAppointmentEnd.before(existingAppointmentEnd) || bookAppointmentEnd.equals(existingAppointmentEnd)
+                        || bookAppointmentEnd.after(existingAppointmentEnd))){
+                    overlapExists = true;
+                    System.out.println(bookAppointmentStart + " is after " + existingAppointmentStart + " AND " + bookAppointmentStart
+                            + " is before " + existingAppointmentEnd + " AND " + bookAppointmentEnd + " is before " + existingAppointmentEnd +
+                            " OR " + bookAppointmentEnd + " is equal to " + existingAppointmentEnd + " OR "
+                            + bookAppointmentEnd + " is after " + existingAppointmentEnd + ", Overlap: " + overlapExists);
+                }
+                if((bookAppointmentStart.before(existingAppointmentStart) && bookAppointmentEnd.after(existingAppointmentStart) ||
+                        bookAppointmentStart.equals(existingAppointmentStart))
+                        && (bookAppointmentEnd.before(existingAppointmentEnd) || bookAppointmentEnd.equals(existingAppointmentEnd)
+                        ||bookAppointmentEnd.after(existingAppointmentEnd))){
+                    overlapExists = true;
+                    System.out.println(bookAppointmentStart + " is before " + existingAppointmentStart + " AND " + bookAppointmentEnd
+                            + " is after " + existingAppointmentStart + " AND " + bookAppointmentEnd + " is before "
+                            + existingAppointmentEnd + " OR " + bookAppointmentEnd + " is equal to " + existingAppointmentEnd + " OR "
+                            + bookAppointmentEnd + " is after " + existingAppointmentEnd + ", Overlap: " + overlapExists);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return overlapExists;
+    }
+
+    /** A method that provides data for the Appointment view based upon user selection.
+     @param viewDays return list of appointments based on "viewDays".
+     @return a list of all appointments within a specified period of days.
+     */
+        public static ObservableList<Appointment> getView(int viewDays) throws SQLException {
         allAppointmentViews.clear();
 
         String sqlQuery = "SELECT a.*, c.* " +
                 "FROM appointments a " +
                 "JOIN contacts c ON a.Contact_ID = c.Contact_ID " +
-                "WHERE date(Start) BETWEEN current_date() AND date_add(current_date(), interval " + viewDays + " day)";
+                "WHERE date(Start) BETWEEN current_date() AND date_add(current_date(), interval " + viewDays + " day)"; // cause SQL Inject.  ? and then bind to variable passing.  Parameterized queries.
             PreparedStatement preparedStatement = JDBC_DAO.getConnection().prepareStatement(sqlQuery);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -60,16 +112,20 @@ public class Appointment_DAO {
                         resultSet.getString("Title"),
                         resultSet.getString("Description"),
                         resultSet.getString("Location"),
-                        resultSet.getString("Contact_Name"),
                         resultSet.getString("Type"),
                         resultSet.getTimestamp("Start").toLocalDateTime(),
                         resultSet.getTimestamp("End").toLocalDateTime(),
                         resultSet.getInt("Customer_ID"),
-                        resultSet.getInt("User_ID")));
+                        resultSet.getInt("User_ID"),
+                        resultSet.getInt("Contact_ID"),
+                        resultSet.getString("Contact_Name")));
         }
-
         return allAppointmentViews;
     }
+
+    /** A method that obtains a list of "Types" captured in the database and returns that list to be utilized in a combo box.
+     @return a filtered list of appointments by type.
+     */
     public static ObservableList<String> getTypes() throws SQLException {
         ObservableList<String> filteredAppointmentListTypes = FXCollections.observableArrayList();
         ObservableList<Appointment> allAppointments = getAllAppointments();
@@ -88,6 +144,10 @@ public class Appointment_DAO {
         }
     }
 
+    /** A method that counts the number of appointments by the user selected "type" and "month".
+     * @param month plus type, counting appointments by "type" and "month".
+     * @return a count of appointments by "type" and "month."
+     * */
     public static int countAppointmentByTypeAndMonth(String type, int month) {
         int count = 0;
         try {
@@ -107,48 +167,9 @@ public class Appointment_DAO {
         return count;
     }
 
-//    public static String countAppointmentsByTypeAndMonth(String type, int month) throws SQLException {
-////        ObservableList<Appointment> allAppointmentsByTypeMonth = FXCollections.observableArrayList();
-////
-////        int count = 0;
-////
-////        try {
-//            String sqlQuery = "SELECT * FROM appointments WHERE Type = ? AND MONTH(Start) = ?"; // Lookup count for SQL query (group by or aggregate functions)
-//            PreparedStatement preparedStatement = JDBC_DAO.getConnection().prepareStatement(sqlQuery);
-////            preparedStatement.setString(1, type);
-////            preparedStatement.setInt(2, month);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//
-////            while (resultSet.next()) {
-////                allAppointmentsByTypeMonth.add(new Appointment(
-////                        resultSet.getInt("Appointment_ID"),
-////                        resultSet.getString("Title"),
-////                        resultSet.getString("Description"),
-////                        resultSet.getString("Location"),
-////                        resultSet.getString("Type"),
-////                        resultSet.getTimestamp("Start").toLocalDateTime(),
-////                        resultSet.getTimestamp("End").toLocalDateTime(),
-////                        resultSet.getString("Create_Date"),
-////                        resultSet.getString("Created_By"),
-////                        resultSet.getString("Last_Update"),
-////                        resultSet.getString("Last_Updated_By"),
-////                        resultSet.getInt("Customer_ID"),
-////                        resultSet.getInt("User_ID"),
-////                        resultSet.getInt("Contact_ID")));
-////            }
-////
-////            for (int i = 0; i < allAppointmentsByTypeMonth.size(); i++) {
-////                allAppointmentsByTypeMonth.get(i);
-////                count++;
-////
-////            }
-////            return Integer.toString(count);
-////        } catch (Exception e) {
-////            throw new RuntimeException(e);
-////        }
-////    }
-
-    /** A method that adds appointments to the SQL database. */
+    /** A method that adds appointments to the SQL database.
+     @param Customer_ID plus additional parameters, adding a customer appointment.
+     */
     public static void addAppointment(int Contact_ID, String Title, String Description, String Location, String Type, LocalDateTime Start, LocalDateTime End, int Customer_ID, int User_ID) {
         try {
             String sqlQuery = "INSERT INTO appointments(Contact_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID) VALUES(?,?,?,?,?,?,?,?,?)";
@@ -169,14 +190,14 @@ public class Appointment_DAO {
         }
     }
 
-    /**
-     * A method that updates an appointment in the SQL database.
+    /** A method that updates an appointment in the SQL database.
+     @param appointment_ID update appointment information in the database.
      */
     public static void updateAppointment(int appointment_ID, String title, String description, String location, String type, LocalDateTime start, LocalDateTime end,
-                                         Timestamp create_Date, String create_By, Timestamp last_Update, String last_Updated_By, int customer_ID, int user_ID, int contact_ID) {
+                                          int customer_ID, int user_ID, int contact_ID) {
         try {
             String sqlQuery = "UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
-                    "last_Update = ?, last_Updated_By = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
+                    "Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
             PreparedStatement preparedStatement = JDBC_DAO.getConnection().prepareStatement(sqlQuery);
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, description);
@@ -184,22 +205,20 @@ public class Appointment_DAO {
             preparedStatement.setString(4, type);
             preparedStatement.setTimestamp(5, Timestamp.valueOf(start));
             preparedStatement.setTimestamp(6, Timestamp.valueOf(end));
-            preparedStatement.setTimestamp(7, last_Update);
-            preparedStatement.setString(8, last_Updated_By);
-            preparedStatement.setInt(9, customer_ID);
-            preparedStatement.setInt(10, user_ID);
-            preparedStatement.setInt(11, contact_ID);
-            preparedStatement.setInt(12, appointment_ID);
+            preparedStatement.setInt(7, customer_ID);
+            preparedStatement.setInt(8, user_ID);
+            preparedStatement.setInt(9, contact_ID);
+            preparedStatement.setInt(10, appointment_ID);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
-    /** A method that deletes a selected appointment from the database. */
-    public static void deleteFromDBByAppointmentID(int selectedAppointmentID) {
-
+    /** A method that deletes a selected appointment from the database.
+     @param selectedAppointmentID delete appointment by ID.
+     */
+    public static void deleteFromDatabaseByAppointmentID(int selectedAppointmentID) {
         try {
             String sqlQueryAppointments = "DELETE FROM appointments WHERE Appointment_ID = ?";
             PreparedStatement preparedStatement1 = JDBC_DAO.getConnection().prepareStatement(sqlQueryAppointments);
@@ -209,115 +228,26 @@ public class Appointment_DAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
-
-    public static void deleteAppointmentFromDBByCustomerID(int selectedCustomerID){
+    /** A method that deletes a selected appointment from the database.
+     @param selectedCustomerID delete appointment by ID.
+     */
+    public static void deleteFromDatabaseByCustomerID(int selectedCustomerID) {
         try {
             String sqlQueryAppointments = "DELETE FROM appointments WHERE Customer_ID = ?";
             PreparedStatement preparedStatement1 = JDBC_DAO.getConnection().prepareStatement(sqlQueryAppointments);
             preparedStatement1.setInt(1, selectedCustomerID);
             preparedStatement1.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-
-//    public static Appointment searchAppointmentByCustomerID(int customerID) throws SQLException {
-//        ObservableList<String> filteredAppointmentList = FXCollections.observableArrayList();
-//        ObservableList<Appointment> allAppointments = getAllAppointments();
-//        Appointment selectedAppointment = Appointment_DAO.searchAppointmentByCustomerID(customerID);
-//
-//        for (int i = 0; i < allAppointments.size(); i++) {
-//            Appointment searchedAppointment = allAppointments.get(i);
-//
-//            if (searchedAppointment.getCustomer_ID() == customerID) {
-//                filteredAppointmentList.add(selectedAppointment);
-//            }
-//        }
-//        return null;
-//    }
-//    public static ObservableList<Appointment> getAllAppointmentsByContact(Contact selectedContact) throws SQLException {
-//        allContactAppointments.clear();
-//        String sqlQuery = "SELECT * FROM client_schedule.appointments WHERE Contact_ID = 'contact_Id'";
-//        PreparedStatement preparedStatement = JDBC_DAO.getConnection().prepareStatement(sqlQuery);
-//        ResultSet resultSet = preparedStatement.executeQuery();
-//
-//        while (resultSet.next()) {
-//            allContactAppointments.add(new Appointment(
-//                    resultSet.getInt("Appointment_ID"),
-//                    resultSet.getString("Title"),
-//                    resultSet.getString("Description"),
-//                    resultSet.getString("Location"),
-//                    resultSet.getString("Type"),
-//                    resultSet.getTimestamp("Start").toLocalDateTime(),
-//                    resultSet.getTimestamp("End").toLocalDateTime(),
-//                    resultSet.getString("Create_Date"),
-//                    resultSet.getString("Created_By"),
-//                    resultSet.getString("Last_Update"),
-//                    resultSet.getString("Last_Updated_By"),
-//                    resultSet.getInt("Customer_ID"),
-//                    resultSet.getInt("User_ID"),
-//                    resultSet.getInt("Contact_ID")));
-//        }
-//        return allContactAppointments;
-//    }
-
-    public static ObservableList<Appointment> getAllAppointmentsByCustomer(int customerID) throws SQLException {
-        allCustomerAppointments.clear();
-        String sqlQuery = "SELECT * FROM appointments WHERE Customer_ID = 'customer_Id'";
-        PreparedStatement preparedStatement = JDBC_DAO.getConnection().prepareStatement(sqlQuery);
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        while (resultSet.next()) {
-            allCustomerAppointments.add(new Appointment(
-                    resultSet.getInt("Appointment_ID"),
-                    resultSet.getString("Title"),
-                    resultSet.getString("Description"),
-                    resultSet.getString("Location"),
-                    resultSet.getString("Type"),
-                    resultSet.getTimestamp("Start").toLocalDateTime(),
-                    resultSet.getTimestamp("End").toLocalDateTime(),
-                    resultSet.getString("Create_Date"),
-                    resultSet.getString("Created_By"),
-                    resultSet.getString("Last_Update"),
-                    resultSet.getString("Last_Updated_By"),
-                    resultSet.getInt("Customer_ID"),
-                    resultSet.getInt("User_ID"),
-                    resultSet.getInt("Contact_ID")));
-        }
-        return allCustomerAppointments;
-    }
-    public static ObservableList<Appointment> lookupSpecificAppointment(int appointment_ID) throws SQLException {
-        ObservableList<Appointment> specificAppointment = FXCollections.observableArrayList();
-        ObservableList<Appointment> allAppointments = getAllAppointments();
-
-        try {
-            for (int i = 0; i < allAppointments.size(); i++) {
-                Appointment searchedAppointment = allAppointments.get(i);
-
-                if (searchedAppointment.getAppointment_ID() == appointment_ID) {
-                    specificAppointment.add(searchedAppointment);
-                }
-            }
-            return specificAppointment;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static boolean appointmentExistsForCustomer(int customer_ID){
-        boolean appointmentExists = false;
-        for (int i = 0; i < allAppointments.size(); i++) {
-            Appointment searchedAppointment = allAppointments.get(i);
-
-            if (searchedAppointment.getCustomer_ID() == customer_ID) {
-                appointmentExists = true;
-            }
-        }
-        return appointmentExists;
-    }
+    /** A method that returns a list of appointments by the contact ID.
+     @param contact_ID return appointments by ID.
+     @return a filtered list of appointments by the contact ID.
+     */
     public static ObservableList<Appointment> lookupAppointment(int contact_ID) throws SQLException {
         ObservableList<Appointment> filteredAppointmentList = FXCollections.observableArrayList();
         ObservableList<Appointment> allAppointments = getAllAppointments();
@@ -336,42 +266,8 @@ public class Appointment_DAO {
         }
     }
 
-    public static ObservableList<Appointment> lookupLocation(String location) throws SQLException {
-        ObservableList<Appointment> filteredAppointmentList = FXCollections.observableArrayList();
-        ObservableList<Appointment> allAppointments = getAllAppointments();
-
-        try {
-            for (int i = 0; i < allAppointments.size(); i++) {
-                Appointment searchedAppointment = allAppointments.get(i);
-
-                if (searchedAppointment.getLocation().equals(location)) {
-                    filteredAppointmentList.add(searchedAppointment);
-                }
-            }
-            return filteredAppointmentList;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static ObservableList<String> getLocations() {
-        ObservableList<String> filteredAppointmentListLocations = FXCollections.observableArrayList();
-
-        for(int i = 0; i < allAppointments.size(); i++){
-            Appointment searchedAppointment = allAppointments.get(i);
-
-            String location = searchedAppointment.getLocation();
-            if(!filteredAppointmentListLocations.contains(location)){
-                filteredAppointmentListLocations.add(location);
-            }
-        }
-        return filteredAppointmentListLocations;
-    }
-
-
-    /**
-     * An observable list that obtains all appointments.
-     */
+    /** An observable list that obtains a list of all appointments.
+     @return a list of all appointments. */
     public static ObservableList<Appointment> getAllAppointments() throws SQLException {
         allAppointments.clear();
         String sqlQuery = "SELECT * FROM appointments";
@@ -387,17 +283,17 @@ public class Appointment_DAO {
                     resultSet.getString("Location"),
                     resultSet.getString("Type"),
                     resultSet.getTimestamp("Start").toLocalDateTime(),
-                    resultSet.getTimestamp("End").toLocalDateTime(),
-                    resultSet.getString("Create_Date"),
-                    resultSet.getString("Created_By"),
-                    resultSet.getString("Last_Update"),
-                    resultSet.getString("Last_Updated_By"),
+                    resultSet.getTimestamp("End").toLocalDateTime(), // performs a conversion with get Timestamp
                     resultSet.getInt("Customer_ID"),
                     resultSet.getInt("User_ID"),
                     resultSet.getInt("Contact_ID")));
         }
         return allAppointments;
     }
+
+    /** A method that returns a joined list of appointments and contact information.
+     @return a list of all appointments with contact information.
+     */
     public static ObservableList<Appointment> getAppointmentsTable() throws SQLException {
         allAppointments.clear();
 
@@ -414,12 +310,13 @@ public class Appointment_DAO {
                     resultSet.getString("Title"),
                     resultSet.getString("Description"),
                     resultSet.getString("Location"),
-                    resultSet.getString("Contact_Name"),
                     resultSet.getString("Type"),
                     resultSet.getTimestamp("Start").toLocalDateTime(),
                     resultSet.getTimestamp("End").toLocalDateTime(),
                     resultSet.getInt("Customer_ID"),
-                    resultSet.getInt("User_ID")));
+                    resultSet.getInt("User_ID"),
+                    resultSet.getInt("Contact_ID"),
+                    resultSet.getString("Contact_Name")));
         }
         return allAppointments;
     }

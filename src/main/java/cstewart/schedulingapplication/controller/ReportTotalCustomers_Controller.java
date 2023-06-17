@@ -19,14 +19,20 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ResourceBundle;
 
+/** A class that allows a user to view the number of customers by the type and month. */
 public class ReportTotalCustomers_Controller implements Initializable {
-    @FXML public Label totalReportTotalCustomers;
+    // Combo boxes for dropdown selections.
     @FXML public ComboBox<String> monthReportTotalCustomers;
     @FXML public ComboBox<String> typeReportTotalCustomers;
 
+    // Label
+    @FXML public Label totalReportTotalCustomers;
+
+    /** A method that navigates the counts the number of customers once type and month have been selected by the user.
+     @param actionEvent returns a customer count by type and month.
+     */
     @FXML
     public void onSelectMonthReportTotalCustomers(ActionEvent actionEvent) throws ParseException {
-
         try {
             int tempMonth = DateTime_DAO.convertMonthStringToInteger(monthReportTotalCustomers.getSelectionModel().getSelectedItem());
             System.out.println("Month convert = " + tempMonth);
@@ -36,7 +42,10 @@ public class ReportTotalCustomers_Controller implements Initializable {
             throw new RuntimeException(e);
         }
     }
-
+//TODO: According to The Little Things, this should look differently.  Is the way that I have it going to pass?  Or do I need to adjust this?
+    /** A method that navigates the user to the report options screen when "Exit Screen" is selected.
+     @param actionEvent navigates to the report options screen.
+     */
     @FXML
     public void onClickExitScreenReportTotalCustomers(ActionEvent actionEvent) throws IOException {
         Parent reportOptionsScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportOptions.fxml"));
@@ -46,6 +55,7 @@ public class ReportTotalCustomers_Controller implements Initializable {
         reportOptionsStage.show();
     }
 
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -61,6 +71,5 @@ public class ReportTotalCustomers_Controller implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

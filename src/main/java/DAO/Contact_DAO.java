@@ -8,10 +8,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
+/** A class used to identify and manipulate database fields for contacts. */
 public class Contact_DAO {
-
     private static final ObservableList<Contact> allContacts = FXCollections.observableArrayList();
 
+    /** An observable list that obtains a list of all contacts.
+     @return a list of all contacts.
+     */
     public static ObservableList<Contact> getAllContacts() throws SQLException {
         if(allContacts.isEmpty()) {
             String sqlQuery = "SELECT * FROM client_schedule.contacts";
@@ -28,16 +31,4 @@ public class Contact_DAO {
         }
         return allContacts;
     }
-    // Lambda expression
-    public static Contact lookupContact(int contactID) throws SQLException {
-        Contact contact = null;
-        ObservableList<Contact> list = getAllContacts().stream().filter(contact1 -> contact1.getContact_ID() == contactID)
-                .collect(Collectors.toCollection(FXCollections::observableArrayList));
-        if(list.size() > 0){
-            contact = list.get(0);
-        }
-
-        return contact;
-    }
-
 }

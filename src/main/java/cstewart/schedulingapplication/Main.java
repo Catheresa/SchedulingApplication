@@ -13,11 +13,14 @@ import java.time.*;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
+/** The "Main" class. */
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         //create a ZoneID object
         ZoneId zoneID = ZoneId.systemDefault();
+
+        System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version"));
 
         //create a Scene and set the stage
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
@@ -32,7 +35,7 @@ public class Main extends Application {
         //show that view
         stage.show();
     }
-
+    /** The "Main" method that connects the program to the database and launches the program. */
     public static void main(String[] args) {
         JDBC_DAO.getConnection();
         launch();

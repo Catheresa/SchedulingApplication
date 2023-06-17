@@ -8,12 +8,7 @@
     <children>
         <ButtonBar layoutX="50.0" layoutY="294.0" prefHeight="55.0" prefWidth="414.0">
             <buttons>
-                <Button fx:id="btnUpdateCustomer" mnemonicParsing="false" onAction="#onClickUpdateCustomer" prefHeight="25.0" prefWidth="106.0" text="Update Customer">
-                    <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                    </font>
-                </Button>
-                <Button fx:id="btnAppointment" mnemonicParsing="false" onAction="#onClickAppointment" prefHeight="25.0" prefWidth="142.0" text="Appointment">
+                <Button  mnemonicParsing="false" onAction="#onClickUpdateCustomer" prefHeight="25.0" prefWidth="106.0" text="Update Customer">
                     <font>
                         <Font name="System Bold Italic" size="12.0" />
                     </font>
@@ -45,6 +40,6 @@
         <Label layoutX="49.0" layoutY="200.0" text="State/Prov" textFill="WHITE" />
         <Label layoutX="49.0" layoutY="230.0" text="Postal Code" textFill="WHITE" />
         <Label layoutX="49.0" layoutY="260.0" text="Phone" textFill="WHITE" />
-        <ComboBox fx:id="cbStateProvince" layoutX="147.0" layoutY="200.0" onAction="#onSelectStateProvince" prefWidth="315.0" promptText="Select State/Province" />
+        <ComboBox fx:id="cbStateProvince" layoutX="147.0" layoutY="200.0" prefWidth="315.0" promptText="Select State/Province" />
     </children>
 </AnchorPane>

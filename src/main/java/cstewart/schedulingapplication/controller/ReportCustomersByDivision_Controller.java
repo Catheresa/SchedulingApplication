@@ -23,11 +23,12 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/** A class that allows a user to view a report of customers by a selected division. */
 public class ReportCustomersByDivision_Controller implements Initializable {
-    // Dropdown box for user to select the division (state)
+    // Combo boxes for dropdown selections.
     @FXML private ComboBox<String> divisionCB;
 
-    // Customer table fields
+    //The customer table and columns:
     @FXML private TableView<Customer> customerTable;
     @FXML private TableColumn<Customer, Integer> customer_IDCol;
     @FXML private TableColumn<Customer, String> customerNameCol;
@@ -35,7 +36,9 @@ public class ReportCustomersByDivision_Controller implements Initializable {
     @FXML private TableColumn<Customer, String> postalCodeCol;
     @FXML private TableColumn<Customer, String> phoneCol;
 
-
+    /** A method that filters a list of customers by the selected state/division.
+     @param actionEvent filters customer list by state/division.
+     */
     @FXML
     public void onSelectDivision(ActionEvent actionEvent) {
         try {
@@ -48,6 +51,9 @@ public class ReportCustomersByDivision_Controller implements Initializable {
         }
     }
 
+    /** A method that reloads a list of all customers.
+     @param actionEvent reloads customer list.
+     */
     @FXML
     public void onClickRefresh(ActionEvent actionEvent) throws IOException {
         Parent reportLocationScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportCustomersByDivision.fxml"));
@@ -57,6 +63,9 @@ public class ReportCustomersByDivision_Controller implements Initializable {
         reportLocationStage.show();
     }
 
+    /** A method that exits the screen.
+     @param actionEvent reloads the report options screen.
+     */
     @FXML
     public void onClickExitScreen(ActionEvent actionEvent) throws IOException {
         Parent reportOptionsScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportOptions.fxml"));
@@ -66,6 +75,7 @@ public class ReportCustomersByDivision_Controller implements Initializable {
         reportOptionsStage.show();
     }
 
+    /** A method that helps load appointment data from the SQL database. */
     @FXML
     private void loadAppointmentTable() {
         try {
@@ -81,6 +91,7 @@ public class ReportCustomersByDivision_Controller implements Initializable {
         }
     }
 
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadAppointmentTable();

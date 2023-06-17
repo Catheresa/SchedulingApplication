@@ -22,20 +22,26 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/** A class that allows a user to view a report of a selected contacts schedule. */
 public class ReportContactSchedule_Controller implements Initializable {
+    // Combo boxes for dropdown selections.
     @FXML private ComboBox<Contact> appointmentContactNameCB;
+
+    //The appointment table and columns:
     @FXML private TableView appointmentTable;
     @FXML private TableColumn appointment_IDCol;
+    @FXML private TableColumn customer_IDCol;
+    @FXML private TableColumn descriptionCol;
+    @FXML private TableColumn endCol;
+    @FXML private TableColumn startCol;
     @FXML private TableColumn titleCol;
     @FXML private TableColumn typeCol;
-    @FXML private TableColumn descriptionCol;
-    @FXML private TableColumn startCol;
-    @FXML private TableColumn endCol;
-    @FXML private TableColumn customer_IDCol;
-
 
     Contact selectedContact;
 
+    /** A method that filters a list of appointments by the selected contact.
+     @param actionEvent filters appointment list by contact.
+     */
     @FXML
     public void onSelectContactNameReportContactSchedule(ActionEvent actionEvent) {
         try {
@@ -48,6 +54,7 @@ public class ReportContactSchedule_Controller implements Initializable {
         }
     }
 
+    /** A method that helps load appointment data from the SQL database. */
     @FXML
     private void loadAppointmentTable() {
         try {
@@ -65,6 +72,10 @@ public class ReportContactSchedule_Controller implements Initializable {
             Logger.getLogger(Customer_Controller.class.getName()).log(Level.SEVERE, null, sqlException);
         }
     }
+
+    /** A method that refreshes the list to show all appointments.
+     @param actionEvent shows all appointments.
+     */
     public void onClickRefresh(ActionEvent actionEvent) throws IOException {
         Parent reportOptionsScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportContactSchedule.fxml"));
         Scene reportOptionsScene = new Scene(reportOptionsScreen);
@@ -72,6 +83,10 @@ public class ReportContactSchedule_Controller implements Initializable {
         reportOptionsStage.setScene(reportOptionsScene);
         reportOptionsStage.show();
     }
+
+    /** A method exits the report and returns to the report options screen.
+     @param actionEvent navigates to the report options screen.
+     */
     @FXML
     public void onClickExitScreenReportContactSchedule(ActionEvent actionEvent) throws IOException {
         Parent reportOptionsScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/reportOptions.fxml"));
@@ -81,6 +96,7 @@ public class ReportContactSchedule_Controller implements Initializable {
         reportOptionsStage.show();
     }
 
+    /** A method to override the superclass. */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadAppointmentTable();

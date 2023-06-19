@@ -42,7 +42,7 @@ public class ReportTotalCustomers_Controller implements Initializable {
             throw new RuntimeException(e);
         }
     }
-//TODO: According to The Little Things, this should look differently.  Is the way that I have it going to pass?  Or do I need to adjust this?
+
     /** A method that navigates the user to the report options screen when "Exit Screen" is selected.
      @param actionEvent navigates to the report options screen.
      */

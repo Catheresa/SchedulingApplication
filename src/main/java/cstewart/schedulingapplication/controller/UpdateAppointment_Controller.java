@@ -143,8 +143,7 @@ public class UpdateAppointment_Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
 
-            startTimeCB.setItems(TimeHelper.getStartTimeList()); //ToDo: Juan, is this what you meant by needing to call CB's 1st & then set default values?
-            endTimeCB.setItems(TimeHelper.getEndTimeList());
+            startTimeCB.setItems(TimeHelper.getStartTimeList());
 
             ObservableList<Contact> allContacts = DAO.Contact_DAO.getAllContacts();
             contactNameCB.setItems(allContacts);

@@ -15,23 +15,27 @@ public class Contact {
     }
 
     // GETTERS AND SETTERS
+    /** @return the Contact_ID. */
     public int getContact_ID() {
         return Contact_ID;
     }
+    /** @param contact_ID the contact_ID to set. */
     public void setContact_ID(int contact_ID) {
         Contact_ID = contact_ID;
     }
-
+    /** @return the Contact_Name. */
     public String getContact_Name() {
         return Contact_Name;
     }
+    /** @param contact_Name the contact_Name to set. */
     public void setContact_Name(String contact_Name) {
         Contact_Name = contact_Name;
     }
-
+    /** @return the Email. */
     public String getEmail() {
         return Email;
     }
+    /** @param email the email to set. */
     public void setEmail(String email) {
         Email = email;
     }

@@ -12,24 +12,20 @@ public class Country {
         Country = country;
     }
 
-    // GETTERS AND SETTERS
-    public Country(String country) {
-        Country = country;
-    }
-    public Country(int country_ID) {
-        Country_ID = country_ID;
-    }
-
+    //GETTERS AND SETTERS
+    /** @return the Country_ID. */
     public int getCountry_ID() {
         return Country_ID;
     }
+    /** @param country_ID the country_ID to set. */
     public void setCountry_ID(int country_ID) {
         Country_ID = country_ID;
     }
-
+    /** @return the Country. */
     public String getCountry() {
         return Country;
     }
+    /** @param country the country to set. */
     public void setCountry(String country) {
         Country = country;
     }

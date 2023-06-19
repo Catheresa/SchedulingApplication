@@ -8,8 +8,7 @@ import java.sql.*;
 import java.time.*;
 import java.lang.String;
 import java.time.temporal.ChronoUnit;
-//TODO: My DAO isn't appearing in javadocs index document in html so my lambda's aren't appearing.
-//TODO: how can I fix that?
+
 /** A class used to identify and manipulate database fields for appointments. */
 public class Appointment_DAO {
 
@@ -17,17 +16,15 @@ public class Appointment_DAO {
     private static final ObservableList<Appointment> allAppointmentViews = FXCollections.observableArrayList();
     private static final ObservableList<Appointment> allCustomerAppointments = FXCollections.observableArrayList();
 
+
     /** A method utilized to identify if an appointment exists within 15 minutes of login and notify user, regardless
      of outcome.
      @param user_ID  lookup appointment by ID.
      @return filtered list of appointments within minutes of login*/
     public static ObservableList<Appointment> appointmentWithinMinutesOfLogin(int user_ID) throws SQLException {
         ObservableList<Appointment> filteredApptWithinMinutesOfLogin = FXCollections.observableArrayList();
- //TODO: Per "The Little Things" I can't query the database as evaluators change their clocks but the DB clock does not change
-        String sqlQuery = "SELECT * FROM appointments " +
-                "WHERE date(Start) BETWEEN now()" +
-                "AND DATE_ADD(NOW(), INTERVAL 15 MINUTE)" +
-                "AND User_ID = ?";
+
+        String sqlQuery = "SELECT * FROM appointments WHERE User_ID = ?";
 
         PreparedStatement preparedStatement = JDBC_DAO.getConnection().prepareStatement(sqlQuery);
         preparedStatement.setInt(1, user_ID);

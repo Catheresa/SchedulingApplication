@@ -20,8 +20,6 @@ public class Main extends Application {
         //create a ZoneID object
         ZoneId zoneID = ZoneId.systemDefault();
 
-        System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version"));
-
         //create a Scene and set the stage
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);

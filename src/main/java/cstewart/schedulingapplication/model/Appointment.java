@@ -82,79 +82,90 @@ public class Appointment {
     }
 
     // GETTERS AND SETTERS
+    /** @return the appointment_ID. */
     public int getAppointment_ID() {
         return appointment_ID;
     }
+    /** @param appointment_ID the appointment_ID to set. */
     public void setAppointment_ID(int appointment_ID) {
         this.appointment_ID = appointment_ID;
     }
-
+    /** @return the title. */
     public String getTitle() {
         return title;
     }
+    /** @param title the title to set. */
     public void setTitle(String title) {
         this.title = title;
     }
-
+    /** @return the description. */
     public String getDescription() {
         return description;
     }
     public void setDescription(String description) {
         this.description = description;
     }
-
+    /** @return the location. */
     public String getLocation() {
         return location;
     }
+    /** @param location the location to set. */
     public void setLocation(String location) {
         this.location = location;
     }
-
+    /** @return the type. */
     public String getType() {
         return type;
     }
+    /** @param type the type to set. */
     public void setType(String type) {
         this.type = type;
     }
-
+    /** @return the start date and time. */
     public LocalDateTime getStart() {
         return start;
     }
+    /** @param start the start to set. */
     public void setStart(LocalDateTime start) {
         this.start = start;
     }
-
+    /** @return the end date and time. */
     public LocalDateTime getEnd() {
         return end;
     }
+    /** @param end the end to set. */
     public void setEnd(LocalDateTime end) {
         this.end = end;
     }
-
+    /** @return the customer_ID. */
     public int getCustomer_ID() {
         return customer_ID;
     }
+    /** @param customer_ID the customer_ID to set. */
     public void setCustomer_ID(int customer_ID) {
         this.customer_ID = customer_ID;
     }
-
+    /** @return the user_ID. */
     public int getUser_ID() {
         return user_ID;
     }
+    /** @param user_ID the user_ID to set. */
     public void setUser_ID(int user_ID) {
         this.user_ID = user_ID;
     }
-
+    /** @return the Contact_ID. */
     public int getContact_ID() {
         return contact_ID;
     }
+    /** @param contact_ID the contact_ID to set. */
     public void setContact_ID(int contact_ID) {
         this.contact_ID = contact_ID;
     }
-
+    /** @return the contact_Name. */
     public String getContact_Name() {
         return contact_Name;
     }
+    /** @param contact_Name the contact_Name to set. */
     public void setContact_Name(String contact_Name) {
         this.contact_Name = contact_Name;
     }

@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -50,51 +51,61 @@ public class Login_Controller implements Initializable {
         String pass = passwordLogin.getText();
         String userName = usernameLogin.getText();
         User selectedUser = UserLogin_DAO.validUser(userName,pass);
+        LocalDateTime now = LocalDateTime.now();
+        boolean overlap = false;
 
         try {
-             if (selectedUser != null) {
-                 ObservableList<Appointment> searchForAppointments = Appointment_DAO.appointmentWithinMinutesOfLogin(selectedUser.getUser_ID());
-                if(searchForAppointments.size() > 0){
-                    for(int i = 0; i < searchForAppointments.size(); i++){
-                        Alert appointmentInMinutes = new Alert(Alert.AlertType.INFORMATION);
-                        appointmentInMinutes.setTitle("Appointment Information!");
-                        appointmentInMinutes.setHeaderText("Appointment in minutes!");
-                        appointmentInMinutes.setContentText("A scheduled appointment ID: " +
-                                searchForAppointments.get(i).getAppointment_ID() + "is coming up on " +
-                                searchForAppointments.get(i).getStart() + ".");
-                        appointmentInMinutes.showAndWait();
-                    }
-                }else{
-                    Alert noAppointmentInMinutes = new Alert(Alert.AlertType.INFORMATION);
-                    noAppointmentInMinutes.setTitle("Appointment Information!");
-                    noAppointmentInMinutes.setHeaderText("Appointments in minutes?");
-                    noAppointmentInMinutes.setContentText("There are no appointments for " +
-                                    userName + " within 15 minutes of login.");
-                    noAppointmentInMinutes.showAndWait();
-                }
-                Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
-                Scene customerScene = new Scene(customerScreen);
-                Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-                customerStage.setScene(customerScene);
-                customerStage.show();
-                FileIOMain.writeToFileLog(userName,true);
-            }else {
-                if (Locale.getDefault().getLanguage().equals("fr")) {
-                    Alert loginError = new Alert(Alert.AlertType.ERROR);
-                    loginError.setTitle(rb.getString("L_Error"));
-                    loginError.setHeaderText(rb.getString("Error"));
-                    loginError.setContentText(rb.getString("Sentence"));
-                    loginError.show();
-                    FileIOMain.writeToFileLog(userName,false);
-                } else {
-                    Alert loginError = new Alert(Alert.AlertType.ERROR);
-                    loginError.setTitle("Login Error");
-                    loginError.setHeaderText("Invalid Login ");
-                    loginError.setContentText("Try entering username and password again");
-                    loginError.show();
-                    FileIOMain.writeToFileLog(userName,false);
-                }
-            }
+              if (selectedUser != null) {
+                  ObservableList<Appointment> searchForAppointments = Appointment_DAO.appointmentWithinMinutesOfLogin(selectedUser.getUser_ID());
+                  if(searchForAppointments.size() > 0) {
+                      for (int i = 0; i < searchForAppointments.size(); i++) {
+                          if (searchForAppointments.get(i).getStart().isAfter(now.minusMinutes(1)) &&
+                                  searchForAppointments.get(i).getStart().isBefore(now.plusMinutes(16))) {
+                              Alert appointmentInMinutes = new Alert(Alert.AlertType.INFORMATION);
+                              appointmentInMinutes.setTitle("Appointment Information!");
+                              appointmentInMinutes.setHeaderText("Appointment in minutes!");
+                              appointmentInMinutes.setContentText("A scheduled appointment ID: " +
+                                      searchForAppointments.get(i).getAppointment_ID() + " is coming up on " +
+                                      searchForAppointments.get(i).getStart() + ".");
+                              appointmentInMinutes.showAndWait();
+
+                              overlap = true;
+                          }
+                      }
+                  }
+                  if(!overlap){
+                      System.out.println("No overlaps were found!");
+                      Alert noAppointmentInMinutes = new Alert(Alert.AlertType.INFORMATION);
+                      noAppointmentInMinutes.setTitle("Appointment Information!");
+                      noAppointmentInMinutes.setHeaderText("Appointments in minutes?");
+                      noAppointmentInMinutes.setContentText("There are no appointments for " +
+                              userName + " within 15 minutes of login.");
+                      noAppointmentInMinutes.showAndWait();
+                  }
+
+                  Parent customerScreen = FXMLLoader.load(getClass().getResource("/cstewart/schedulingapplication/customer.fxml"));
+                  Scene customerScene = new Scene(customerScreen);
+                  Stage customerStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                  customerStage.setScene(customerScene);
+                  customerStage.show();
+                  FileIOMain.writeToFileLog(userName,true);
+              }else {
+                  if (Locale.getDefault().getLanguage().equals("fr")) {
+                      Alert loginError = new Alert(Alert.AlertType.ERROR);
+                      loginError.setTitle(rb.getString("L_Error"));
+                      loginError.setHeaderText(rb.getString("Error"));
+                      loginError.setContentText(rb.getString("Sentence"));
+                      loginError.show();
+                      FileIOMain.writeToFileLog(userName,false);
+                  } else {
+                      Alert loginError = new Alert(Alert.AlertType.ERROR);
+                      loginError.setTitle("Login Error");
+                      loginError.setHeaderText("Invalid Login ");
+                      loginError.setContentText("Try entering username and password again");
+                      loginError.show();
+                      FileIOMain.writeToFileLog(userName,false);
+                  }
+              }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

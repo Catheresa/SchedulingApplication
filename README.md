@@ -2,7 +2,7 @@
 Application Title: Scheduling Application. 
 Purpose of Application: Allows customer appointments to be scheduled.
 
-Author: Catheresa Stewart - Student ID: 009490256, cste583@wgu.edu.
+Author: Catheresa Stewart
 
 Intellij: Intellij IDEA 2021.1.3 (Community Edition)
 SDK: SDK 17 java version "17.0.1"
